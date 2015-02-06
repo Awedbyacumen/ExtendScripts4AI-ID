@@ -1,7 +1,8 @@
-﻿var w = new Window("dialog { text: 'PDF 打开选项', frameLocation:[400, 200], alignChildren:['fill', 'top'], filePnl: Panel { text: 'PDF 文件', orientation:'row', alignChildren:['left', 'center'], loadBtn: Button { text:'. . .', helpTip :'浏览 PDF 文件, 或将文件路径粘帖至右边文本框'}, et: EditText { text:'' , preferredSize: [220, 20]}, }, rangePnl: Panel { text: '页面', orientation:'column', alignChildren:['fill', 'top'], range: Group {allRb: RadioButton { text:'全部页面', value:true, helpTip: '部分 PDF 文件可能无法正确获取页数\\n遇此请自行输入“ 1-总页数”'}, rangeRb: RadioButton { text:'范围:', helpTip: '正确: 1-5 或 1, 2, 3 或 1, 2-4, 5, 7-8\\n允许空格, 逗号须为半角'} et: EditText { text: '', characters:25, properties:{multiline:true} }}, caGrp: Group{artboardsCb: Checkbox { text:'创建画板', preferredSize: [84, 20], helpTip: '仅适用于CS4/CS5'}, st: StaticText { text: '间距:' }, et: EditText { text:'20', characters:3}, st2: StaticText { text:'pt' }}, }, dividerLine: Panel { preferredSize: [280, 1], margins:0, }, btn: Group { orientation:'row', alignChildren:['right', 'center'], cancelBtn: Button { text:'取消', properties:{name:'cancel'}}, buildBtn: Button { text:'打开', properties:{name:'ok'} }}}");
+﻿// forked from animalia, translated to English by arnaudin
+var w = new Window("dialog { text: 'PDF Loader', frameLocation:[400, 200], alignChildren:['fill', 'top'], filePnl: Panel { text: 'PDF file', orientation:'row', alignChildren:['left', 'center'], loadBtn: Button { text:'Select file...', helpTip :'Browse for a file, or paste the file path into the text box to the right.'}, et: EditText { text:'' , preferredSize: [220, 20]}, }, rangePnl: Panel { text: 'Pages', orientation:'column', alignChildren:['fill', 'top'], range: Group {allRb: RadioButton { text:'All pages', value:true, helpTip: 'Import all pages in the PDF file.'}, rangeRb: RadioButton { text:'Page range:', helpTip: 'Select a range of pages to import. For example: 1-5 or 1, 2, 3 or 1, 2-4, 5, 7-8.'} et: EditText { text: '', characters:25, properties:{multiline:true} }}, caGrp: Group{artboardsCb: Checkbox { text:'Create Artboards', preferredSize: [84, 20], helpTip: 'Create Artboards in Illustrator CS4 and greater.'}, st: StaticText { text: 'Size:' }, et: EditText { text:'20', characters:3}, st2: StaticText { text:'pt' }}, }, dividerLine: Panel { preferredSize: [280, 1], margins:0, }, btn: Group { orientation:'row', alignChildren:['right', 'center'], cancelBtn: Button { text:'Cancel', properties:{name:'cancel'}}, buildBtn: Button { text:'Open', properties:{name:'ok'} }}}");
 w.rangePnl.caGrp.artboardsCb.enabled = w.rangePnl.caGrp.artboardsCb.value = app.version.split(".")[0] > 13;
 w.filePnl.loadBtn.onClick = function () {
-	var pdfile = File.openDialog('选择PDF文件', '*.pdf');
+	var pdfile = File.openDialog('Select the PDF file', '*.pdf, *.ai');
 	pdfile && w.filePnl.et.text = pdfile.fsName;
 };
 w.rangePnl.range.et.onChange = function () {
@@ -54,7 +55,7 @@ w.btn.buildBtn.onClick = function go() {
 	totalSeconds = (finish - start) / 1000;
 	minutes = Math.floor(totalSeconds / 60);
 	seconds = totalSeconds % 60;
-	alert('操作已完成，图层为隐藏状态，按住Alt单击眼睛图标以显示\n打开 ' + activeDocument.layers.length + ' 页, 用时 ' + minutes + ' 分, ' + Math.round(seconds) + ' 秒.');
+	alert('Operation completed.\nTo view PDF pages adjust layer visibility. Alt-click in the visibility column to toggle all layers.\n Opened ' + activeDocument.layers.length + ' pages in ' + minutes + ' minutes ' + Math.round(seconds) + ' seconds');
 	app.userInteractionLevel = oldInteractionPref;
 
 	function mainloop(start, end, pages) {
@@ -108,7 +109,7 @@ function getPDFPageCount(f) {
 	while (!gotCount) {
 		next_line = f.readln();
 		if (f.eof) {
-			alert("抱歉，未能获取总页数");
+			alert("Unable to get total number of pages");
 			f.close();
 			return 0
 		}
